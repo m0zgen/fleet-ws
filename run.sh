@@ -6,12 +6,12 @@
 # Sys env / paths / etc
 # -------------------------------------------------------------------------------------------\
 PATH=$PATH:/bin:/sbin:/usr/bin:/usr/sbin:/usr/local/bin:/usr/local/sbin
-SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd)
+SCRIPT_PATH=$(cd `dirname "${BASH_SOURCE[0]}"` && pwd); cd $SCRIPT_PATH
 
 # Initial variables
 # ---------------------------------------------------\
 DOWNLOAD_FLEET_URL="https://download.jetbrains.com/product?code=FLL&release.type=preview&release.type=eap&platform=linux_x64"
-DOWNLOAD_DESTINATION=$SCRIPT_PATH/fleet
+DOWNLOAD_DESTINATION=$SCRIPT_PATH
 
 # Functions
 # ---------------------------------------------------\
@@ -59,12 +59,21 @@ check_dest() {
     if [[ ! -d "${DOWNLOAD_DESTINATION}"  ]]; then
         mkdir -p "${DOWNLOAD_DESTINATION}"
     fi
-
 }
 
+# check_already() {
+#     if [[ condition ]]; then
+#         #statements
+#     fi
+# }
+
 get_fleet() {
-    curl -LSs "https://download.jetbrains.com/product?code=FLL&release.type=preview&release.type=eap&platform=linux_x64" --output $DOWNLOAD_DESTINATION/fleet
-    chmod +x $DOWNLOAD_DESTINATION/fleet
+    echo "Download Fleet from JetBrains..."
+    curl -LSs "https://download.jetbrains.com/product?code=FLL&release.type=preview&release.type=eap&platform=linux_x64" --output fleet && chmod +x fleet
+
+    if [[ "$_RUN" -eq "1" ]]; then
+        ./fleet launch workspace -- --auth=accept-everyone --publish --enableSmartMode
+    fi
 }
 
 # Action
